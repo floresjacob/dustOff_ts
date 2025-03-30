@@ -9,20 +9,18 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        //Ensure fields aren't empty
-        if (!username || !password) {
-            setError('Fill in both username and password');
-            return;
-        }
-
-        //Fake Auth Check
-        if (username === 'user' && password == 'password') {
+        const response = await fetch('http://localhost:5001/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+        });
+        const data = await response.json();
+        if (response.ok) {
             onLogin(username);
         } else {
-            setError('Invalid username or password');
+            setError(data.error);
         }
     };
 

@@ -11,12 +11,19 @@ function App() {
     setIsAuthenticated(true);
   };
 
+  const handleLogout = () => {
+    setUsername('');
+    setIsAuthenticated(false);
+  }
+
   return (
     <div style={{ padding: '2rem' }}> 
       {isAuthenticated ? (
         <div>
           <h1>Welcome, {username}!</h1>
           <p>You are now logged in</p>
+          {/* logout button */}
+          <button onClick={(handleLogout)}>Logout</button>
         </div>
       ) : (
         <Login onLogin={handleLogin} />
