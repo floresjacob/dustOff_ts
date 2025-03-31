@@ -1,34 +1,45 @@
 import React, { useState } from 'react'
+import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
+import ProtectedHello from './ProtectedHello';
 import Login from './Login'
 import './App.css'
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState<string>('');
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const handleLogin = (username: string) => {
     setUsername(username);
-    setIsAuthenticated(true);
+    setIsLoggedIn(true);
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
     setUsername('');
-    setIsAuthenticated(false);
   }
 
   return (
-    <div style={{ padding: '2rem' }}> 
-      {isAuthenticated ? (
-        <div>
-          <h1>Welcome, {username}!</h1>
-          <p>You are now logged in</p>
-          {/* logout button */}
-          <button onClick={(handleLogout)}>Logout</button>
-        </div>
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
-    </div>
+    <BrowserRouter>
+      <div className="App">
+
+        <Routes>
+          <Route 
+            path="/login"
+            element={isLoggedIn ? <Navigate to="/protected-hello" /> : <Login onLogin={handleLogin}/>}
+          />
+
+          <Route
+            path="/protected-hello"
+            element={isLoggedIn ? <ProtectedHello /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/" 
+            element={<Navigate to={isLoggedIn ? "/protected-hello" : "/login"} />}
+          />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
